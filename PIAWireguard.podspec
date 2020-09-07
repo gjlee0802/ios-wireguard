@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name              = "PIAWireguard"
-    s.version           = "1.0.0"
+    s.version           = "1.0.1"
     s.summary           = "PIA Wireguard implementation in Swift."
 
     s.homepage          = "https://www.privateinternetaccess.com/"
@@ -31,6 +31,7 @@ Pod::Spec.new do |s|
 
     s.subspec "AppExtension" do |p|
         p.source_files          = "PIAWireguard/AppExtension/**/*.swift"
+        p.resources             = "PIAWireguard/AppExtension/Certificates/**/*"
 
         p.frameworks            = "NetworkExtension"
         p.pod_target_xcconfig   = { "APPLICATION_EXTENSION_API_ONLY" => "YES" }
