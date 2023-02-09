@@ -12,13 +12,23 @@ ARTIFACT="../lib/libwg-go.a"
 rm -rf "$BUILD_ROOT" "$ARTIFACT"
 mkdir -p "$BUILD_ROOT"
 
-# Create a patched goroot using patches needed for iOS
-GOROOT="$BUILD_ROOT/goroot/" # Not exported yet, still need the original GOROOT to copy
-echo $GOROOT
+
+REAL_GOROOT="/usr/local/go"
+GOROOT="$BUILD_ROOT/goroot"
+[ -n "$REAL_GOROOT" ]
 mkdir -p "$GOROOT"
-rsync --exclude="pkg/obj/go-build" -a "$(go env GOROOT)/" "$GOROOT/"
+rsync -a --delete --exclude=pkg/obj/go-build "$REAL_GOROOT/" "$GOROOT/"
 export GOROOT
-#cat goruntime-*.diff | patch -p1 -fN -r- -d "$GOROOT"
+#cat goruntime-*.diff | patch -p1 -f -N -r- -d "$GOROOT"
+#touch "$@"
+
+# Create a patched goroot using patches needed for iOS
+#GOROOT="$BUILD_ROOT/goroot/" # Not exported yet, still need the original GOROOT to copy
+#echo $GOROOT
+#mkdir -p "$GOROOT"
+#rsync --exclude="pkg/obj/go-build" -a "$(go env GOROOT)/" "$GOROOT/"
+#export GOROOT
+##cat goruntime-*.diff | patch -p1 -fN -r- -d "$GOROOT"
 
 BUILD_CFLAGS="-fembed-bitcode -Wno-unused-command-line-argument"
 
