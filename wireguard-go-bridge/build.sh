@@ -33,6 +33,7 @@ function build_arch() {
     local SDKPATH
     SDKPATH="$(xcrun --sdk "$SDKNAME" --show-sdk-path)"
     local FULL_CFLAGS="$BUILD_CFLAGS -isysroot $SDKPATH -arch $ARCH"
+    go get -u golang.org/x/sys
     CGO_ENABLED=1 CGO_CFLAGS="$FULL_CFLAGS" CGO_LDFLAGS="$FULL_CFLAGS" GOOS=darwin GOARCH="$GOARCH" GOROOT="/usr/local/go" \
         go build -tags ios -ldflags=-w -trimpath -v -o "$BUILD_ROOT/libwg-go-$ARCH.a" -buildmode c-archive
     rm -f "$BUILD_ROOT/libwg-go-$ARCH.h"
@@ -40,8 +41,8 @@ function build_arch() {
 }
 
 build_arch x86_64 amd64 iphonesimulator
-build_arch arm64 arm64 iphoneos
-build_arch armv7 arm iphoneos
+#build_arch arm64 arm64 iphoneos
+#build_arch armv7 arm iphoneos
 
 # Create the fat static library including all architectures
 LIPO="${LIPO:-lipo}"
