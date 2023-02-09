@@ -6,7 +6,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cd "$ROOT"
 
-BUILD_ROOT="$ROOT/out/build/"
+BUILD_ROOT="$ROOT/out/build"
 ARTIFACT="../lib/libwg-go.a"
 
 rm -rf "$BUILD_ROOT" "$ARTIFACT"
@@ -14,6 +14,7 @@ mkdir -p "$BUILD_ROOT"
 
 # Create a patched goroot using patches needed for iOS
 GOROOT="$BUILD_ROOT/goroot/" # Not exported yet, still need the original GOROOT to copy
+echo $GOROOT
 mkdir -p "$GOROOT"
 rsync --exclude="pkg/obj/go-build" -a "$(go env GOROOT)/" "$GOROOT/"
 export GOROOT
@@ -32,7 +33,7 @@ function build_arch() {
     local SDKPATH
     SDKPATH="$(xcrun --sdk "$SDKNAME" --show-sdk-path)"
     local FULL_CFLAGS="$BUILD_CFLAGS -isysroot $SDKPATH -arch $ARCH"
-    CGO_ENABLED=1 CGO_CFLAGS="$FULL_CFLAGS" CGO_LDFLAGS="$FULL_CFLAGS" GOOS=darwin GOARCH="$GOARCH" \
+    CGO_ENABLED=1 CGO_CFLAGS="$FULL_CFLAGS" CGO_LDFLAGS="$FULL_CFLAGS" GOOS=darwin GOARCH="$GOARCH" GOROOT="/usr/local/go" \
         go build -tags ios -ldflags=-w -trimpath -v -o "$BUILD_ROOT/libwg-go-$ARCH.a" -buildmode c-archive
     rm -f "$BUILD_ROOT/libwg-go-$ARCH.h"
     LIPO_INPUT_LIBS+=("$BUILD_ROOT/libwg-go-$ARCH.a")
